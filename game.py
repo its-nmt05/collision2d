@@ -13,6 +13,10 @@ class Game:
         self.FPS = FPS
 
         pygame.init()
+        pygame.font.init()
+
+        self.font = pygame.font.SysFont("'Comic Sans MS", 30)
+
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(
             (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
@@ -30,20 +34,33 @@ class Game:
                     if event.key == pygame.K_ESCAPE:
                         running = False
                         self.exit()
-                        
+
             # Fill the screen with bg color
             self.screen.fill(self.BG_COLOR)
 
             engine.update()
-            for particle in engine.particles:
-                pygame.draw.circle(
-                    self.screen, self.PARTICLE_COLOR, particle.pos, engine.radius)
+            self.draw(engine.root_node)
 
             # Update the display
             pygame.display.update()
 
             # cap the frame rate
             self.clock.tick(self.FPS)
+
+    def draw(self, node):
+        if node.is_leaf():
+            pygame.draw.rect(self.screen, self.PARTICLE_COLOR,
+                             (node.min_bound, node.max_bound), 1)
+            for particle in node.particles:
+                pygame.draw.circle(
+                    self.screen, self.PARTICLE_COLOR, particle.pos, particle.radius)
+                
+            text_surface = self.font.render(
+                str(node.num_particles()), False, self.PARTICLE_COLOR)
+            self.screen.blit(text_surface, node.min_bound)
+        else:
+            for child in node.children:
+                self.draw(child)
 
     def exit(self):
         pygame.quit()
