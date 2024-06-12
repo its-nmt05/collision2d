@@ -1,4 +1,5 @@
 from octree_node import OctreeNode
+from grid import Grid
 from particle import Particle
 from random import uniform
 import numpy as np
@@ -23,7 +24,7 @@ class Engine:
 
         self.t_const = t_const
 
-        self.root_node = OctreeNode(diag_one, diag_two)
+        self.grid = Grid(diag_one, diag_two, radius * 5)
 
     def create_particles(self):
         for _ in range(self.num_particles):
@@ -42,7 +43,7 @@ class Engine:
             self.create_particle()
         else:
             self.particles.append(p)
-            self.root_node.insert_particle(p)
+            self.grid.insert_particle(p)
 
     def update(self):
         for particle in self.particles:
@@ -51,11 +52,11 @@ class Engine:
 
             particle.update(self.t_const)
 
-        particle_collide(self)
+        # particle_collide(self)
+
+        self.grid.update(self)
 
         wall_collide(self)
-
-        self.root_node.update(self.particles)
 
     def gen_pos(self):
         pos_x = uniform(self.diag_one[0] + self.radius,

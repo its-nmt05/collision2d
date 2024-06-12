@@ -39,7 +39,7 @@ class Game:
             self.screen.fill(self.BG_COLOR)
 
             engine.update()
-            self.draw(engine.root_node)
+            self.draw(engine)
 
             # Update the display
             pygame.display.update()
@@ -47,20 +47,24 @@ class Game:
             # cap the frame rate
             self.clock.tick(self.FPS)
 
-    def draw(self, node):
-        if node.is_leaf():
-            pygame.draw.rect(self.screen, self.PARTICLE_COLOR,
-                             (node.min_bound, node.max_bound), 1)
-            for particle in node.particles:
-                pygame.draw.circle(
-                    self.screen, self.PARTICLE_COLOR, particle.pos, particle.radius)
-                
-            text_surface = self.font.render(
-                str(node.num_particles()), False, self.PARTICLE_COLOR)
-            self.screen.blit(text_surface, node.min_bound)
-        else:
-            for child in node.children:
-                self.draw(child)
+    def draw(self, engine):
+        for particle in engine.particles:
+            pygame.draw.circle(
+                self.screen, self.PARTICLE_COLOR, particle.pos, particle.radius)
+            
+        # if node.is_leaf():
+        #     pygame.draw.rect(self.screen, self.PARTICLE_COLOR,
+        #                      (node.min_bound, node.max_bound), 1)
+        #     for particle in node.particles:
+        #         pygame.draw.circle(
+        #             self.screen, self.PARTICLE_COLOR, particle.pos, particle.radius)
+
+        #     text_surface = self.font.render(
+        #         str(node.num_particles()), False, self.PARTICLE_COLOR)
+        #     self.screen.blit(text_surface, node.min_bound)
+        # else:
+        #     for child in node.children:
+        #         self.draw(child)
 
     def exit(self):
         pygame.quit()
